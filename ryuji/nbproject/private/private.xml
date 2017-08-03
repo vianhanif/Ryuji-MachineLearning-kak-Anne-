@@ -3,9 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/anne/Documents/netbeans/ryuji/src/ryuji/Client.java</file>
-            <file>file:/home/anne/Documents/netbeans/ryuji/src/ryuji/MainRyuji.java</file>
-            <file>file:/home/anne/Documents/netbeans/ryuji/src/ryuji/Ryuji.java</file>
+            <file>file:/home/jefri/NetBeansProjects/Ryuji-kakAnne/ryuji/src/ryuji/Client.java</file>
+            <file>file:/home/jefri/NetBeansProjects/Ryuji-kakAnne/ryuji/src/ryuji/TrieNodeMap.java</file>
+            <file>file:/home/jefri/NetBeansProjects/Ryuji-kakAnne/ryuji/src/ryuji/Utils.java</file>
+            <file>file:/home/jefri/NetBeansProjects/Ryuji-kakAnne/ryuji/src/ryuji/MainRyuji.java</file>
+            <file>file:/home/jefri/NetBeansProjects/Ryuji-kakAnne/ryuji/src/ryuji/Ryuji.java</file>
+            <file>file:/home/jefri/NetBeansProjects/Ryuji-kakAnne/ryuji/src/ryuji/Splitter.java</file>
         </group>
     </open-files>
 </project-private>
