@@ -72,6 +72,7 @@ public class MainRyuji {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         PrintWriter out = new PrintWriter(System.out, true);
+        TextToSpeechConverter ttsc = new TextToSpeechConverter();
 
         while (true) {
             if ((state.equals("socket")) && (name == null)){                
@@ -84,9 +85,11 @@ public class MainRyuji {
                 if (!name.contains("USER NOT FOUND")){                    
                     //call t2s
                     out.println(ryuji.greetings(name));
+                     ttsc.speak(ryuji.greetings(name));
                 } else {
                     //call t2s                    
                     out.println(ryuji.greetings(name));
+                    ttsc.speak(ryuji.greetings(name));
                     name = "USER";
                 }
                 out.print("RYUJI> ");
@@ -141,6 +144,7 @@ public class MainRyuji {
                 
                 //call t2s
                 out.println("RYUJI> " + replyLine);
+                ttsc.speak(replyLine);
                 
                 state = "conversation";
             }
