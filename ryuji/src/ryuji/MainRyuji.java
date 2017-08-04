@@ -74,11 +74,12 @@ public class MainRyuji {
         Configuration configuration = new Configuration();
 
         // Set path to the acoustic model.
+          String home = System.getProperty("user.home"); 
         configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
         // Set path to the dictionary.
-        configuration.setDictionaryPath("/home/jefri/ryuji-lm/2450.dic");
+        configuration.setDictionaryPath(home+"/data/2450.dic");
         // Set path to the language model.
-        configuration.setLanguageModelPath("/home/jefri/ryuji-lm/2450.lm");
+        configuration.setLanguageModelPath(home+"/data/2450.lm");
 
         //Recognizer object, Pass the Configuration object
         LiveSpeechRecognizer recognize = new LiveSpeechRecognizer(configuration);
@@ -94,25 +95,36 @@ public class MainRyuji {
         TextToSpeechConverter ttsc = new TextToSpeechConverter();
 
         while (true) {
-            if ((state.equals("socket")) && (name == null)) {
-        if (first == true){
+                if ((state.equals("socket")) && (name == null)){                
+                if (first == true){
                     client.WriteMessage("REG;JAVA;");
                     first = false;
-                    state = "wait_init";                    
-                }
-                name = checkSocket().toUpperCase();
-                if (name.contains("MISS")){
-                    name = name.replace("MISS", "MISS ");//"MISS "+name.substring(4);
+                   // state = "wait_init";                    
                 } else {
-                    name = name.replace("MISTER", "MISTER ");//"MISTER "+name.substring(6);
+                    name = checkSocket().toUpperCase();
+                    if (name.contains("MISS")){
+                        name = name.replace("MISS", "MISS ");//"MISS "+name.substring(4);
+                    } else {
+                        name = name.replace("MISTER", "MISTER ");//"MISTER "+name.substring(6);
+                    }
+                    state = "greeting";
                 }
-                state = "greeting";
-            } else if (state.equals("greeting")) {
+            }
+            
+            else if (state.equals("wait_init")){
+                String regd;
+                do {
+                    regd = checkSocket().toUpperCase();
+                } while (!regd.contains("REGD"));
+                state = "socket";
+            }
+            
+            else if (state.equals("greeting")){
                 out.print("RYUJI> ");
-                if (!name.contains("USER NOT FOUND")) {
+                if (!name.contains("NO")){
                     //call t2s
                     out.println(ryuji.greetings(name));
-                    ttsc.speak(ryuji.greetings(name));
+                     ttsc.speak(ryuji.greetings(name));
                 } else {
                     //call t2s                    
                     out.println(ryuji.greetings(name));
@@ -121,9 +133,8 @@ public class MainRyuji {
                 }
                 out.print("RYUJI> ");
                 //call t2s
-                out.println(ryuji.getIntro(gender));
-                ttsc.speak(ryuji.getIntro(gender));
-
+                out.println(ryuji.getIntro(gender));                
+                
                 state = "conversation";
             } else if (state.equals("conversation")) {
                 if ((result = recognize.getResult()) != null) {
@@ -135,10 +146,11 @@ public class MainRyuji {
                     //call s2t
                     //line = "find lintang".toUpperCase();
                     line = command.toUpperCase();
-                    if(line.contains("FIND")||line.contains("VISION")||line.contains("GUNADARMA")||line.contains("RECTOR")&& line.length()>2){
+                    if(line.contains("THANKYOU") || line.contains("FIND")||line.contains("VISION")||line.contains("GUNADARMA")||line.contains("RECTOR") 
+                          && line.split("\\w+").length >2  ){
                     if (ryuji.isCommand(line)) {
                         state = "command";
-                    } else if (line.equals("NO THANKS")) {
+                    } else if (line.matches("THANKYOU.*")) {
                         state = "terminate";
                     } else {
                         state = "knowledge";
@@ -146,7 +158,7 @@ public class MainRyuji {
                     }
                 }
 
-            } else if (state.equals("command")){
+            }       else if (state.equals("command")){
                 String [] command = ryuji.command(line);
                 //send message to socket
                 client.WriteMessage("DATA;"+command[1].replaceAll(" ", "")+";");
