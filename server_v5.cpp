@@ -60,7 +60,7 @@ int main()
 	//argument kedua, tipe dari socket: SOCK_STREAM (specify transport layer protocol) dan SOCK_DGRAM (ga tau ini apaan)
 	//argument ketiga, protokolnya: kalo 0 system yang bakal pilih protokol yang sesuai, defaultnya TCP
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	
+
 	//cek berhasil apa enggak bikin socketnya
 	if (sockfd < 0){
 		cout << "ERROR establishing connection." << endl;
@@ -143,7 +143,7 @@ int main()
 		bzero(buffer, 256);
 
 //============================================================================================================
-		char buffer_send[] = "miss.anne\n";
+		char buffer_send[] = "missanne\n";
 
 		//write byte2 dari string ke client
 		//argumen terakhir merakan besar ukuran dari pesan yang mau dikirim
@@ -179,7 +179,7 @@ int main()
 			//write byte2 dari string ke client
 			//argumen terakhir merakan besar ukuran dari pesan yang mau dikirim
 			jumlah_byte = write(newsockfd, buffer_send, sizeof(buffer_send));
-			
+
 		}
 
 		//kalau ga ada byte maka abaikan aja

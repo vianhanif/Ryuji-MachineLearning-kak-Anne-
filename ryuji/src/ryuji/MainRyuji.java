@@ -74,12 +74,12 @@ public class MainRyuji {
         Configuration configuration = new Configuration();
 
         // Set path to the acoustic model.
-          String home = System.getProperty("user.home"); 
+        String home = System.getProperty("user.home");
         configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
         // Set path to the dictionary.
-        configuration.setDictionaryPath(home+"/data/2450.dic");
+        configuration.setDictionaryPath(home + "/data/2450.dic");
         // Set path to the language model.
-        configuration.setLanguageModelPath(home+"/data/2450.lm");
+        configuration.setLanguageModelPath(home + "/data/2450.lm");
 
         //Recognizer object, Pass the Configuration object
         LiveSpeechRecognizer recognize = new LiveSpeechRecognizer(configuration);
@@ -95,36 +95,32 @@ public class MainRyuji {
         TextToSpeechConverter ttsc = new TextToSpeechConverter();
 
         while (true) {
-                if ((state.equals("socket")) && (name == null)){                
-                if (first == true){
+            if ((state.equals("socket")) && (name == null)) {
+                if (first == true) {
                     client.WriteMessage("REG;JAVA;");
                     first = false;
-                   // state = "wait_init";                    
+                    // state = "wait_init";                    
                 } else {
                     name = checkSocket().toUpperCase();
-                    if (name.contains("MISS")){
+                    if (name.contains("MISS")) {
                         name = name.replace("MISS", "MISS ");//"MISS "+name.substring(4);
                     } else {
                         name = name.replace("MISTER", "MISTER ");//"MISTER "+name.substring(6);
                     }
                     state = "greeting";
                 }
-            }
-            
-            else if (state.equals("wait_init")){
+            } else if (state.equals("wait_init")) {
                 String regd;
                 do {
                     regd = checkSocket().toUpperCase();
                 } while (!regd.contains("REGD"));
                 state = "socket";
-            }
-            
-            else if (state.equals("greeting")){
+            } else if (state.equals("greeting")) {
                 out.print("RYUJI> ");
-                if (!name.contains("NO")){
+                if (!name.contains("NO")) {
                     //call t2s
                     out.println(ryuji.greetings(name));
-                     ttsc.speak(ryuji.greetings(name));
+                    ttsc.speak(ryuji.greetings(name));
                 } else {
                     //call t2s                    
                     out.println(ryuji.greetings(name));
@@ -133,57 +129,54 @@ public class MainRyuji {
                 }
                 out.print("RYUJI> ");
                 //call t2s
-                out.println(ryuji.getIntro(gender));                
-                
+                out.println(ryuji.getIntro(gender));
+                ttsc.speak(ryuji.getIntro(gender));
+
                 state = "conversation";
             } else if (state.equals("conversation")) {
                 if ((result = recognize.getResult()) != null) {
                     String command = result.getHypothesis();
-                    
-                    out.print(name + "> "+command);
+
+                    out.print(name + "> " + command);
                     out.flush();
 
                     //call s2t
                     //line = "find lintang".toUpperCase();
                     line = command.toUpperCase();
-                    if(line.contains("THANKYOU") || line.contains("FIND")||line.contains("VISION")||line.contains("GUNADARMA")||line.contains("RECTOR") 
-                          && line.split("\\w+").length >2  ){
-                    if (ryuji.isCommand(line)) {
-                        state = "command";
-                    } else if (line.matches("THANKYOU.*")) {
-                        state = "terminate";
-                    } else {
-                        state = "knowledge";
-                    }
+                    if (line.contains("NAME") || line.contains("THANKYOU") || line.contains("FIND") || line.contains("VISION") || line.contains("GUNADARMA") || line.contains("RECTOR")
+                            && line.split("\\w+").length > 2) {
+                        if (ryuji.isCommand(line)) {
+                            state = "command";
+                        } else if (line.matches("THANKYOU.*")) {
+                            state = "terminate";
+                        } else {
+                            state = "knowledge";
+                        }
                     }
                 }
 
-            }       else if (state.equals("command")){
-                String [] command = ryuji.command(line);
+            } else if (state.equals("command")) {
+                String[] command = ryuji.command(line);
                 //send message to socket
-                client.WriteMessage("DATA;"+command[1].replaceAll(" ", "")+";");
-                
+                client.WriteMessage("DATA;" + command[1].replaceAll(" ", "") + ";");
+
                 name = null;
                 state = "socket";
-            }
-            
-            else if (state.equals("terminate")){
+            } else if (state.equals("terminate")) {
                 //call t2s
                 out.println("OK SEE YOU LATER");
                 client.WriteMessage("EXIT");
                 state = "socket";
-            }
-            
-            else if (state.equals("knowledge")){
+            } else if (state.equals("knowledge")) {
                 String replyLine = ryuji.formulateReply(line);
                 if (replyLine == null) {
                     replyLine = "I don't have enough information for answering it.";
                 }
-                
+
                 //call t2s
                 out.println("RYUJI> " + replyLine);
                 ttsc.speak(replyLine);
-                
+
                 state = "conversation";
             }
         }
