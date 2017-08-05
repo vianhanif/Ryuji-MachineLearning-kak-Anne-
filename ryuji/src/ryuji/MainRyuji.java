@@ -99,7 +99,7 @@ public class MainRyuji {
                 if (first == true) {
                     client.WriteMessage("REG;JAVA;");
                     first = false;
-                    // state = "wait_init";                    
+                    // state = "wait_init";                  
                 } else {
                     name = checkSocket().toUpperCase();
                     if (name.contains("MISS")) {
